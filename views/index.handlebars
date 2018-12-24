@@ -1,0 +1,29 @@
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">News</a>
+             {{!-- Was not able to Enable a reference for news --}}
+        </div>
+        <ul class="nav navbar-nav navbar-right top-buttons">
+            <li><button class="btn scrape">Scrape Articles!</button></li>
+            <li><button class="btn saved">Saved Articles</button></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="dbArticles">
+    <div class="load"></div>
+    {{#each_upto articles}}
+    {{#unless saved}}
+    <div class="article">
+        <a href="{{link}}">
+            <h2>{{title}}</h2>
+        </a>
+        <p>{{summary}}</p>
+        {{!-- I planned on setting saved articles with this nice frame, if I was abke to save them --}}
+        <button class="btn btn-primary save" data-id="{{_id}}">Save</button>
+        <br>
+    </div>
+    {{/unless}}
+    {{/each_upto}}
+</div>
