@@ -1,48 +1,38 @@
 // Dependencies
-const bodyParser = require("body-parser");
-const express = require("express");
-const handlebars = require("handlebars");
-const logger = require("morgan");
-const mongoose = require("mongoose");
-
-// Set Port
-const PORT = 3000;
-
-// Initialize Express
-const app = express();
-
-// Configure middleware:
-
-// Use morgan logger for logging requests
-app.use(logger("dev"));
-// Use body-parser for handling form submissions
-app.use(bodyParser.urlencoded({ extended: false }));
-// Use express.static to serve the public folder as a static directory
-app.use(express.static(process.cwd() + "/public"));
+// Require our dependencies
+var express = require("express");
+var mongoose = require("mongoose");
 var exphbs = require("express-handlebars");
+
+// Set up our port to be either the host's designated port, or 3000
+var PORT = process.env.PORT || 3000;
+
+// Instantiate our Express App
+var app = express();
+
+// Require our routes
+var routes = require("./routes");
+
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// Make public a static folder
+app.use(express.static("public"));
+
+// Connect Handlebars to our Express app
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-// Handlebars const
-handlebars.registerHelper('each_upto', function (ary, max, options) {
-    if (!ary || ary.length == 0)
-        return options.inverse(this);
+// Have every request go through our route middleware
+app.use(routes);
 
-    var result = [];
-    for (var i = 0; i < max && i < ary.length; ++i)
-        result.push(options.fn(ary[i]));
-    return result.join('');
-});
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
-// Mongo deployed database
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-
+// Connect to the Mongo DB
 mongoose.connect(MONGODB_URI);
 
-// Require Routes
-require("./routes/scraping")(app);
-
-// Start the server
-app.listen(PORT, function () {
-    console.log("App running on port " + PORT + "!");
+// Listen on the port
+app.listen(PORT, function() {
+  console.log("Listening on port: " + PORT);
 });

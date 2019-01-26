@@ -1,6 +1,6 @@
 // Exporting an object containing our current models
 
 module.exports = {
-    Article: require("./Article"),
+    Headline: require("./Headline"),
     Note: require("./Note")
 };
